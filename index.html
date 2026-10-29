@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>池核 · POOLCORE ｜ 空旷的水与瓷砖</title>
+<meta name="description" content="池核（Poolcore）爱好者站点：收录程序化生成的空旷泳池场景，第一视角 360° 环视，实时合成的水声与回声。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23061A21'/%3E%3Crect x='11' y='4' width='10' height='24' fill='none' stroke='%237FE3F0' stroke-width='2'/%3E%3Crect x='11' y='13' width='10' height='6' fill='%237FE3F0'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/styles.css?v=20261021g">
+</head>
+<body>
+
+<!-- 图标精灵：同文档 use，file:// 下可用 -->
+<svg class="sprite" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="i-sound" viewBox="0 0 24 24"><path d="M4 9.5h3.2L12 5.5v13l-4.8-4H4z"/><path d="M15.5 9.2a4 4 0 0 1 0 5.6"/><path d="M18 6.8a7.4 7.4 0 0 1 0 10.4"/></symbol>
+  <symbol id="i-mute" viewBox="0 0 24 24"><path d="M4 9.5h3.2L12 5.5v13l-4.8-4H4z"/><path d="M16 10l4 4M20 10l-4 4"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.1"/><path d="M12 2.6v2.3M12 19.1v2.3M2.6 12h2.3M19.1 12h2.3M5.4 5.4l1.6 1.6M17 17l1.6 1.6M18.6 5.4L17 7M7 17l-1.6 1.6"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 19.5S4.5 15 4.5 9.8A3.8 3.8 0 0 1 12 7.6a3.8 3.8 0 0 1 7.5 2.2c0 5.2-7.5 9.7-7.5 9.7z"/></symbol>
+  <symbol id="i-enter" viewBox="0 0 24 24"><path d="M5 12h13"/><path d="M12.5 6.5L19 12l-6.5 5.5"/></symbol>
+  <symbol id="i-prev" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
+  <symbol id="i-next" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></symbol>
+  <symbol id="i-expand" viewBox="0 0 24 24"><path d="M4 9V4h5M20 15v5h-5M20 9V4h-5M4 15v5h5"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 11v5"/><path d="M12 8.2h.01"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 5v14"/><path d="M6 13l6 6 6-6"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M15.5 15.5L20 20"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><path d="M9 9h9v11H9z"/><path d="M6 15V4h9"/></symbol>
+  <symbol id="i-save" viewBox="0 0 24 24"><path d="M6 4h9l3 3v13H6z"/><path d="M9 4v5h6V4"/><path d="M9 14h6"/></symbol>
+</svg>
+
+<div class="grain" aria-hidden="true"></div>
+<div class="scan" aria-hidden="true"></div>
+
+<a class="skip" href="#main">跳到主内容</a>
+
+<header class="nav" id="nav">
+  <div class="nav-inner">
+    <a class="brand" href="#/home" aria-label="池核 POOLCORE 首页">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-text">池核<em>POOLCORE</em></span>
+    </a>
+    <nav class="nav-links" aria-label="主导航">
+      <a class="nav-link" href="#/home" data-route="home">首页</a>
+      <a class="nav-link" href="#/gallery" data-route="gallery">场景画廊</a>
+      <a class="nav-link" href="#/collection" data-route="collection">我的收藏</a>
+      <a class="nav-link" href="#/contribute" data-route="contribute">提交场景</a>
+      <a class="nav-link" href="#/about" data-route="about">关于</a>
+    </nav>
+    <div class="nav-actions">
+      <button class="pill sound-toggle" id="sound-toggle" type="button" aria-pressed="false">
+        <svg class="ico" aria-hidden="true"><use href="#i-mute"></use></svg>
+        <span id="sound-toggle-label">点击开启声音</span>
+      </button>
+      <button class="icon-btn nav-toggle" id="nav-toggle" type="button" aria-label="打开菜单" aria-expanded="false">
+        <svg class="ico" aria-hidden="true"><use href="#i-menu"></use></svg>
+      </button>
+    </div>
+  </div>
+  <div class="nav-drawer" id="nav-drawer" hidden>
+    <a class="drawer-link" href="#/home">首页</a>
+    <a class="drawer-link" href="#/gallery">场景画廊</a>
+    <a class="drawer-link" href="#/collection">我的收藏</a>
+    <a class="drawer-link" href="#/contribute">提交场景</a>
+    <a class="drawer-link" href="#/about">关于</a>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- 1. 首页 -->
+  <section class="view" id="view-home">
+    <div class="hero">
+      <canvas class="hero-canvas" id="hero-canvas" data-scene="indoor-morning"></canvas>
+      <div class="hero-veil" aria-hidden="true"></div>
+      <div class="hero-inner">
+        <p class="eyebrow">第一视角 · 360° 环视 · 实时合成</p>
+        <h1 class="hero-title">空旷的水<br>与瓷砖</h1>
+        <p class="hero-sub">池核（Poolcore）爱好者站点。这里的每一面瓷砖、每一道水波、每一声回声，都是在你的浏览器里当场生成的。</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#/gallery">
+            进入场景画廊
+            <svg class="ico" aria-hidden="true"><use href="#i-enter"></use></svg>
+          </a>
+          <a class="btn btn-ghost" href="#/about">池核是什么</a>
+        </div>
+      </div>
+      <a class="scroll-hint" href="#home-featured" aria-label="向下浏览">
+        <svg class="ico" aria-hidden="true"><use href="#i-down"></use></svg>
+      </a>
+    </div>
+
+    <section class="section" id="home-featured">
+      <div class="section-head">
+        <h2 class="section-title">精选场景</h2>
+        <p class="section-note">按住拖动即可原地环视</p>
+      </div>
+      <div class="rule" aria-hidden="true"></div>
+      <div class="card-grid" id="featured-grid"></div>
+      <div class="stats" id="home-stats"></div>
+    </section>
+  </section>
+
+  <!-- 2. 画廊 -->
+  <section class="view" id="view-gallery" hidden>
+    <section class="section">
+      <div class="section-head">
+        <h2 class="section-title">场景画廊</h2>
+        <p class="section-note">共 <span class="mono" id="gallery-count">0</span> 个场景</p>
+      </div>
+      <div class="rule" aria-hidden="true"></div>
+      <div class="toolbar">
+        <div class="chips" id="gallery-chips" role="group" aria-label="分类筛选"></div>
+        <div class="toolbar-right">
+          <label class="search">
+            <svg class="ico" aria-hidden="true"><use href="#i-search"></use></svg>
+            <input type="search" id="gallery-search" placeholder="搜索名称 / 标签 / 描述" aria-label="搜索场景">
+          </label>
+          <label class="select-wrap">
+            <select id="gallery-sort" aria-label="排序">
+              <option value="default">默认顺序</option>
+              <option value="name">按名称</option>
+              <option value="calm">按安静程度</option>
+            </select>
+          </label>
+        </div>
+      </div>
+      <div class="tagrow tagcloud" id="gallery-tags"></div>
+      <div class="card-grid" id="gallery-grid"></div>
+      <div class="empty" id="gallery-empty" hidden>
+        <p class="empty-title">没有匹配的场景</p>
+        <p class="empty-note">换个关键词，或清空筛选条件。</p>
+        <button class="btn btn-ghost" type="button" id="gallery-reset">清空筛选</button>
+      </div>
+    </section>
+  </section>
+
+  <!-- 3. 收藏 -->
+  <section class="view" id="view-collection" hidden>
+    <section class="section">
+      <div class="section-head">
+        <h2 class="section-title">我的收藏</h2>
+        <p class="section-note">数据只存在你自己的浏览器里</p>
+      </div>
+      <div class="rule" aria-hidden="true"></div>
+      <div class="fav-summary" id="collection-summary"></div>
+      <div class="card-grid" id="collection-grid"></div>
+      <div class="empty" id="collection-empty">
+        <p class="empty-title">还没有收藏</p>
+        <p class="empty-note">在画廊里点一下卡片右上角的水位标记，就能把场景留在这里。</p>
+        <a class="btn btn-primary" href="#/gallery">去画廊看看</a>
+      </div>
+      <div class="export-row" id="collection-actions" hidden>
+        <button class="btn btn-ghost" type="button" id="collection-copy">
+          <svg class="ico" aria-hidden="true"><use href="#i-copy"></use></svg>复制收藏清单
+        </button>
+        <button class="btn btn-ghost" type="button" id="collection-download">
+          <svg class="ico" aria-hidden="true"><use href="#i-save"></use></svg>下载为文件
+        </button>
+        <button class="btn btn-danger" type="button" id="collection-clear">清空收藏</button>
+      </div>
+    </section>
+  </section>
+
+  <!-- 4. 投稿 -->
+  <section class="view" id="view-contribute" hidden>
+    <section class="section">
+      <div class="section-head">
+        <h2 class="section-title">提交你的池核</h2>
+        <p class="section-note">不用上传照片：调参数，这里当场把它建出来</p>
+      </div>
+      <div class="rule" aria-hidden="true"></div>
+      <div class="contrib-layout">
+        <form class="form" id="contrib-form" novalidate>
+          <div class="form-grid">
+            <label class="field">
+              <span class="field-label">场景名称</span>
+              <input type="text" id="c-name" maxlength="18" placeholder="例如：更衣通道尽头的池" required>
+            </label>
+            <label class="field">
+              <span class="field-label">分类</span>
+              <select id="c-cat">
+                <option value="indoor">室内池</option>
+                <option value="outdoor">户外池</option>
+                <option value="night">夜池</option>
+                <option value="abandoned">废弃池</option>
+              </select>
+            </label>
+          </div>
+          <label class="field">
+            <span class="field-label">标签<span class="field-hint">用空格或逗号分隔</span></span>
+            <input type="text" id="c-tags" maxlength="60" placeholder="瓷砖 泳道线 回声">
+          </label>
+          <label class="field">
+            <span class="field-label">描述</span>
+            <textarea id="c-desc" rows="3" maxlength="120" placeholder="写一句这个场景给人的感觉。"></textarea>
+          </label>
+
+          <div class="sliders">
+            <div class="slider-row">
+              <span class="field-label">瓷砖色相</span>
+              <input class="range" type="range" id="c-hue" min="150" max="260" step="1" value="196" data-field="tile.hue">
+              <output class="mono" id="c-hue-out"></output>
+            </div>
+            <div class="slider-row">
+              <span class="field-label">瓷砖尺寸</span>
+              <input class="range" type="range" id="c-tilesize" min="0.1" max="0.6" step="0.01" value="0.25" data-field="tile.size">
+              <output class="mono" id="c-tilesize-out"></output>
+            </div>
+            <div class="slider-row">
+              <span class="field-label" title="池底是固定的（2.2m），这里调水面高度">水位</span>
+              <input class="range" type="range" id="c-level" min="-2.6" max="0.45" step="0.05" value="-0.18" data-field="water.level">
+              <output class="mono" id="c-level-out"></output>
+            </div>
+            <div class="slider-row">
+              <span class="field-label">水面清浊</span>
+              <input class="range" type="range" id="c-clarity" min="0" max="1" step="0.02" value="0.7" data-field="water.clarity">
+              <output class="mono" id="c-clarity-out"></output>
+            </div>
+            <div class="slider-row">
+              <span class="field-label">灯光强度</span>
+              <input class="range" type="range" id="c-light" min="0.3" max="1.6" step="0.02" value="1" data-field="light.intensity">
+              <output class="mono" id="c-light-out"></output>
+            </div>
+            <div class="slider-row">
+              <span class="field-label">雾气浓度</span>
+              <input class="range" type="range" id="c-fog" min="0" max="1.6" step="0.02" value="1" data-field="fog.density">
+              <output class="mono" id="c-fog-out"></output>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button class="btn btn-primary" type="submit" id="contrib-save">
+              <svg class="ico" aria-hidden="true"><use href="#i-save"></use></svg>收进我的投稿
+            </button>
+            <button class="btn btn-ghost" type="button" id="contrib-random">给我一组随机参数</button>
+            <button class="btn btn-ghost" type="button" id="contrib-reset">重置</button>
+          </div>
+        </form>
+
+        <aside class="preview-pane">
+          <div class="preview-frame">
+            <canvas class="preview-canvas" id="contrib-preview"></canvas>
+            <span class="preview-tag mono">实时预览 · 拖动环视</span>
+          </div>
+          <div class="preview-meta" id="contrib-meta"></div>
+          <div class="export-box">
+            <div class="export-head">
+              <span class="field-label">场景数据</span>
+              <div class="export-actions">
+                <button class="btn btn-mini" type="button" id="contrib-copy">
+                  <svg class="ico" aria-hidden="true"><use href="#i-copy"></use></svg>复制
+                </button>
+                <button class="btn btn-mini" type="button" id="contrib-download">
+                  <svg class="ico" aria-hidden="true"><use href="#i-save"></use></svg>下载
+                </button>
+              </div>
+            </div>
+            <pre class="code-area" id="contrib-json"></pre>
+          </div>
+        </aside>
+      </div>
+
+      <div class="section-head sub-head">
+        <h3 class="section-title small">我的投稿</h3>
+        <p class="section-note"><span class="mono" id="contrib-count">0</span> 个</p>
+      </div>
+      <div class="rule" aria-hidden="true"></div>
+      <div class="card-grid" id="contrib-mine"></div>
+    </section>
+  </section>
+
+  <!-- 5. 关于 -->
+  <section class="view" id="view-about" hidden>
+    <section class="section">
+      <div class="section-head">
+        <h2 class="section-title">关于池核</h2>
+        <p class="section-note">Poolcore · 空旷、回声与被水泡过的瓷砖</p>
+      </div>
+      <div class="rule" aria-hidden="true"></div>
+      <div class="prose">
+        <p>池核是一类关于「池」的怀旧空间感：放空的水面、泛蓝的瓷砖、泳道线在水下的影子、荧光灯管在半夜还亮着、以及一个人站在池边时那种过于空旷的回声。它不需要有人，也不需要事情发生。</p>
+        <p>公共泳池有过很具体的模样——马赛克与勾缝、水位线上浅浅的水碱、深水区深下去的那一块、天窗把光斜切进水里。这些细节在记忆里比照片更清楚，所以这个站点选择不用照片：每一面墙、每一片水波都由代码按参数搭出来，你可以走进去环绕一圈，也可以自己调一组参数投一个上来。</p>
+        <p>它的安静是有声音的：水轻轻拍在池壁上、大厅里拖着尾巴的回声、灯具低低的嗡鸣、远处偶尔落下一滴水。</p>
+      </div>
+
+      <div class="section-head sub-head">
+        <h3 class="section-title small">怎么用</h3>
+      </div>
+      <div class="rule" aria-hidden="true"></div>
+      <div class="howto">
+        <div class="howto-item"><span class="howto-num mono">01</span><strong>按住拖动</strong><p>左右无限环绕，上下可低头看水、抬头看天窗。</p></div>
+        <div class="howto-item"><span class="howto-num mono">02</span><strong>滚轮 / 双指</strong><p>调整视野宽窄，像换一颗镜头。</p></div>
+        <div class="howto-item"><span class="howto-num mono">03</span><strong>声音</strong><p>首次点击后才开始合成，可随时静音。</p></div>
+        <div class="howto-item"><span class="howto-num mono">04</span><strong>收藏与投稿</strong><p>都只写进浏览器本地，不上传任何东西。</p></div>
+      </div>
+
+      <div class="section-head sub-head">
+        <h3 class="section-title small">收录声明</h3>
+      </div>
+      <div class="rule" aria-hidden="true"></div>
+      <div class="stats" id="about-counts"></div>
+      <div class="prose">
+        <p>全部画面由 Canvas 实时绘制，没有一张外部图片；音效由 Web Audio 实时合成，没有一个音频文件。没有框架、没有构建、没有网络请求——把整个文件夹拷到任何地方，双击 <span class="mono">index.html</span> 就能看。</p>
+      </div>
+    </section>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span>池核 · POOLCORE</span>
+    </div>
+    <p class="footer-note">程序化生成 · 无外部素材 · 无后端</p>
+    <button class="link-btn" type="button" id="to-top">回到顶部</button>
+  </div>
+</footer>
+
+<!-- 360 查看器 -->
+<div class="viewer" id="viewer" hidden>
+  <canvas class="viewer-canvas" id="viewer-canvas"></canvas>
+  <div class="viewer-loading" id="viewer-loading"><span class="load-bar"></span><span class="load-text">正在注水…</span></div>
+
+  <div class="viewer-top">
+    <div class="viewer-head">
+      <span class="viewer-cat mono" id="viewer-cat">室内池</span>
+      <h2 class="viewer-title" id="viewer-title">场景</h2>
+    </div>
+    <div class="viewer-light" id="viewer-light-box">
+      <svg class="ico" aria-hidden="true"><use href="#i-sun"></use></svg>
+      <input class="range viewer-light-range" type="range" id="viewer-light"
+             min="30" max="150" step="5" value="100" aria-label="光照强度">
+      <output class="viewer-light-out mono" id="viewer-light-out" for="viewer-light">100%</output>
+    </div>
+    <button class="icon-btn" type="button" id="viewer-close" aria-label="退出查看器">
+      <svg class="ico" aria-hidden="true"><use href="#i-close"></use></svg>
+    </button>
+  </div>
+
+  <div class="viewer-hint" id="viewer-hint"><span class="hint-ring" aria-hidden="true"></span>按住拖动环绕 · ←→ 转身 · ↑↓（W/S）前后走 · 走进池子会落水，按住空格上浮</div>
+
+  <div class="viewer-bar">
+    <div class="bar-group">
+      <button class="pill" type="button" id="viewer-sound" aria-pressed="false">
+        <svg class="ico" aria-hidden="true"><use href="#i-mute"></use></svg><span id="viewer-sound-label">声音</span>
+      </button>
+      <button class="pill" type="button" id="viewer-quality"><span id="viewer-quality-label">画质 540p</span></button>
+    </div>
+    <div class="bar-group">
+      <button class="pill" type="button" id="viewer-prev" aria-label="上一个场景">
+        <svg class="ico" aria-hidden="true"><use href="#i-prev"></use></svg><span class="hide-sm">上一个</span>
+      </button>
+      <button class="pill" type="button" id="viewer-next" aria-label="下一个场景">
+        <span class="hide-sm">下一个</span><svg class="ico" aria-hidden="true"><use href="#i-next"></use></svg>
+      </button>
+      <button class="pill" type="button" id="viewer-fav" aria-pressed="false">
+        <svg class="ico" aria-hidden="true"><use href="#i-heart"></use></svg><span id="viewer-fav-label">收藏</span>
+      </button>
+      <button class="pill" type="button" id="viewer-full" aria-label="全屏">
+        <svg class="ico" aria-hidden="true"><use href="#i-expand"></use></svg><span class="hide-sm">全屏</span>
+      </button>
+      <button class="pill" type="button" id="viewer-info" aria-expanded="false" aria-label="场景信息">
+        <svg class="ico" aria-hidden="true"><use href="#i-info"></use></svg><span class="hide-sm">信息</span>
+      </button>
+    </div>
+  </div>
+
+  <aside class="viewer-drawer" id="viewer-drawer" hidden>
+    <button class="drawer-handle" type="button" id="viewer-drawer-handle" aria-label="收起信息"></button>
+    <h3 class="drawer-title" id="drawer-title">场景</h3>
+    <p class="drawer-meta mono" id="drawer-meta"></p>
+    <p class="drawer-desc" id="drawer-desc"></p>
+    <div class="tagrow" id="drawer-tags"></div>
+    <p class="field-label">看向</p>
+    <div class="hotspots" id="drawer-hotspots"></div>
+    <p class="field-label">水面动效<span class="field-hint">停手之后水照样晃，「省电」只是慢一点</span></p>
+    <div class="tagrow">
+      <button class="chip" type="button" id="anim-toggle" aria-pressed="true">流畅</button>
+    </div>
+    <div class="drawer-readout mono" id="drawer-readout"></div>
+  </aside>
+
+  <div class="viewer-toast" id="viewer-toast" hidden></div>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+<noscript>
+  <p class="noscript">这个站点靠脚本实时绘制画面与合成声音，需要启用 JavaScript 才能进入。</p>
+</noscript>
+
+<script src="js/data/scenes.js?v=20261021g"></script>
+<script src="js/core/renderer.js?v=20261028a"></script>
+<script src="js/audio/soundscape.js?v=20261021g"></script>
+<script src="js/store.js?v=20261021g"></script>
+<script src="js/ui/gallery.js?v=20261021g"></script>
+<script src="js/ui/pages.js?v=20261021g"></script>
+<script src="js/ui/viewer.js?v=20261028a"></script>
+<script src="js/app.js?v=20261021g"></script>
+</body>
+</html>
